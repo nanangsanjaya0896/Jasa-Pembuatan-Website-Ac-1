@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-hand: "Caveat", cursive;
+
+  --color-arctic: #0a1628;
+  --color-navy: #1a2b4a;
+  --color-glacier: #2e6da4;
+  --color-sky: #5ba3d9;
+  --color-ice: #eef6ff;
+  --color-clean: #f8fafb;
+  --color-silver: #c8d8e8;
+  --color-mint: #7bc8c0;
+  --color-flame: #e8720c;
+  --color-slatebody: #4a5568;
+  --color-coal: #1e2832;
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-pulse-dot: pulsedot 2.4s ease-in-out infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes pulsedot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.82); }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-clean text-arctic font-sans antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-sky);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-clean);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-silver);
+  border-radius: 8px;
+  border: 2px solid var(--color-clean);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-glacier);
+}
+
+/* Fine film grain for dark premium surfaces */
+.noise-dark {
+  position: relative;
+  isolation: isolate;
+}
+.noise-dark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+
+
+/* Display type */
+.display {
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+/* Link — clean, no underline lines */
+.u-link {
+  transition: color 0.3s;
+}
+
+/* Slow ken-burns for hero imagery */
+.kb {
+  animation: kb 22s ease-in-out infinite alternate;
+}
+@keyframes kb {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.1); }
+}
+
+/* Soft premium shadow */
+.shadow-lift {
+  box-shadow:
+    0 1px 2px rgb(10 22 40 / 0.04),
+    0 12px 32px -12px rgb(10 22 40 / 0.12),
+    0 32px 64px -32px rgb(10 22 40 / 0.14);
+}
+.shadow-card {
+  box-shadow:
+    0 1px 1px rgb(10 22 40 / 0.03),
+    0 8px 24px -12px rgb(10 22 40 / 0.10);
+}
