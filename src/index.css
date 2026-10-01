@@ -82,6 +82,23 @@ body {
 
 
 
+/* Hormati preferensi pengguna yang sensitif terhadap gerakan.
+   Animasi & transisi dimatikan, tetapi konten tetap tampil sepenuhnya. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .kb {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 /* Display type */
 .display {
   letter-spacing: -0.035em;

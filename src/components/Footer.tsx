@@ -1,5 +1,14 @@
 import { ArrowUpRight, Clock3, Mail, MapPin, Music2, Phone } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { LogoLockup, LogoMark } from "./Logo";
+import {
+  CONTACT,
+  INFO_LINKS,
+  LEGAL_LINKS,
+  SERVICE_LINKS,
+  SOCIALS,
+  waLink,
+} from "@/config/site";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -20,46 +29,92 @@ function YoutubeIcon({ className }: { className?: string }) {
   );
 }
 
-const SERVICE_LINKS = ["Cuci AC Standard", "Cuci AC Deep Cleaning", "Servis & Perbaikan AC", "Isi Ulang Freon", "Pasang AC Baru", "Perawatan Berkala"];
-const INFO_LINKS = ["Cara Kerja", "Area Jangkauan Kami", "Harga & Paket", "Blog Tips AC", "Karir — Jadi Teknisi", "Kebijakan Privasi"];
+const SOCIAL_ICONS: Record<string, (p: { className?: string }) => React.ReactElement> = {
+  Instagram: InstagramIcon,
+  TikTok: (p) => <Music2 className={p.className} />,
+  YouTube: YoutubeIcon,
+};
 
-const SOCIALS = [
-  { icon: InstagramIcon, label: "Instagram" },
-  { icon: Music2, label: "TikTok" },
-  { icon: YoutubeIcon, label: "YouTube" },
-  {
-    icon: (p: { className?: string }) => (
-      <svg viewBox="0 0 24 24" className={p.className} fill="currentColor">
-        <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.7.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.5-.6c.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1.1 2.2-.2 3.7a11.6 11.6 0 0 0 4.5 4.2c1.7.8 2.4.9 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.1Z" />
-      </svg>
-    ),
-    label: "WhatsApp",
-  },
-];
+/* ── Satu item tautan footer ──────────────────────────────────────
+ * Menangani dua kondisi:
+ *   href terisi → tautan normal yang bisa diklik
+ *   href kosong → tampil sebagai teks nonaktif (fitur belum dibuat),
+ *                 sehingga tidak ada tautan yang melompat ke atas halaman
+ */
+function FooterLink({ label, href }: { label: string; href: string }) {
+  if (!href) {
+    return (
+      <span
+        className="cursor-default text-[13.5px] font-medium text-white/25 select-none"
+        title="Segera hadir"
+      >
+        {label}
+      </span>
+    );
+  }
+  return (
+    <a href={href} className="u-link text-[13.5px] font-medium text-white/60 transition-colors hover:text-white">
+      {label}
+    </a>
+  );
+}
 
-/* Minimal hairline-framed QR motif */
+/* ── Tombol media sosial ──────────────────────────────────────────
+ * Bila akun belum diisi di config, ikon tampil redup dan tidak
+ * bisa diklik — bukan tautan rusak.
+ */
+function SocialButton({ label, href }: { label: string; href: string }) {
+  const Icon = SOCIAL_ICONS[label] ?? InstagramIcon;
+
+  if (!href) {
+    return (
+      <span
+        className="grid h-10 w-10 cursor-default place-items-center rounded-full border border-white/[0.06] text-white/25 select-none"
+        title={`${label} — segera hadir`}
+        aria-label={`${label} belum tersedia`}
+      >
+        <Icon className="h-4 w-4" />
+      </span>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={label}
+      className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/60 transition-all duration-300 hover:-translate-y-0.5 hover:border-sky/50 hover:bg-white/5 hover:text-white"
+    >
+      <Icon className="h-4 w-4" />
+    </a>
+  );
+}
+
+/* QR asli — mengarah ke WhatsApp dengan pesan terisi otomatis */
 function Qr() {
-  const cells = [
-    "1110111", "1010101", "1111101", "0001010", "1101110", "1010011", "1110111",
-  ];
   return (
     <div className="inline-flex items-center gap-4 rounded-2xl border border-white/10 p-3">
-      <div className="grid grid-cols-7 gap-[2.5px] rounded-lg bg-white p-2">
-        {cells.flatMap((row, y) =>
-          row.split("").map((c, x) => (
-            <span key={`${x}-${y}`} className={`h-[5px] w-[5px] rounded-[1px] ${c === "1" ? "bg-arctic" : "bg-transparent"}`} />
-          ))
-        )}
+      <div className="rounded-lg bg-white p-2" aria-hidden="true">
+        <QRCodeSVG
+          value={waLink()}
+          size={64}
+          level="M"
+          bgColor="#ffffff"
+          fgColor="#0a1628"
+        />
       </div>
       <div>
         <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/80">Scan & Chat</p>
-        <p className="mt-1 text-[11px] text-white/40">WhatsApp QR resmi</p>
+        <p className="mt-1 text-[11px] text-white/40">Arahkan kamera ke kode</p>
       </div>
     </div>
   );
 }
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer id="kontak" className="relative overflow-hidden bg-coal text-white/60">
       <div className="relative z-[2] mx-auto max-w-7xl px-5 pb-10 pt-20 md:px-8 md:pt-28">
@@ -74,18 +129,11 @@ export default function Footer() {
             </p>
             <p className="mt-5 flex items-start gap-2 text-[12.5px] font-semibold text-white/45">
               <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky" />
-              Jabodetabek · Bandung · Surabaya · Semarang
+              {CONTACT.area}
             </p>
             <div className="mt-7 flex items-center gap-2.5">
               {SOCIALS.map((s) => (
-                <a
-                  key={s.label}
-                  href="#atas"
-                  aria-label={s.label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/60 transition-all duration-300 hover:-translate-y-0.5 hover:border-sky/50 hover:bg-white/5 hover:text-white"
-                >
-                  <s.icon className="h-4 w-4" />
-                </a>
+                <SocialButton key={s.label} label={s.label} href={s.href} />
               ))}
             </div>
           </div>
@@ -95,10 +143,8 @@ export default function Footer() {
             <h4 className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-white/35">Layanan</h4>
             <ul className="mt-6 space-y-3.5">
               {SERVICE_LINKS.map((l) => (
-                <li key={l}>
-                  <a href="#layanan" className="u-link text-[13.5px] font-medium text-white/60 transition-colors hover:text-white">
-                    {l}
-                  </a>
+                <li key={l.label}>
+                  <FooterLink label={l.label} href={l.href} />
                 </li>
               ))}
             </ul>
@@ -109,10 +155,8 @@ export default function Footer() {
             <h4 className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-white/35">Informasi</h4>
             <ul className="mt-6 space-y-3.5">
               {INFO_LINKS.map((l) => (
-                <li key={l}>
-                  <a href="#atas" className="u-link text-[13.5px] font-medium text-white/60 transition-colors hover:text-white">
-                    {l}
-                  </a>
+                <li key={l.label}>
+                  <FooterLink label={l.label} href={l.href} />
                 </li>
               ))}
             </ul>
@@ -125,21 +169,24 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-mint" />
                 <div>
-                  <p className="font-bold text-white/85">+62 812-ARKTIS-1</p>
-                  <p className="text-[11.5px] text-white/40">0800-ARKTIS — bebas pulsa</p>
+                  <p className="font-bold text-white/85">{CONTACT.phone}</p>
+                  <p className="text-[11.5px] text-white/40">{CONTACT.phoneNote}</p>
                 </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-mint" />
-                <a href="mailto:halo@arktisservice.id" className="u-link font-medium text-white/70 hover:text-white">
-                  halo@arktisservice.id
+                <a href={`mailto:${CONTACT.email}`} className="u-link font-medium text-white/70 hover:text-white">
+                  {CONTACT.email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-mint" />
                 <div className="text-[12.5px] leading-relaxed text-white/55">
-                  <p>Senin–Sabtu: 07.00–20.00 WIB</p>
-                  <p>Minggu: 08.00–17.00 WIB</p>
+                  {CONTACT.hours.map((h) => (
+                    <p key={h.day}>
+                      {h.day}: {h.time}
+                    </p>
+                  ))}
                 </div>
               </li>
             </ul>
@@ -151,11 +198,11 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 pt-8 text-[12px] text-white/35 md:flex-row">
-          <p>© 2025 ARKTIS HOME SERVICE. Semua hak dilindungi undang-undang.</p>
+          <p>© {year} ARKTIS HOME SERVICE. Semua hak dilindungi undang-undang.</p>
           <p className="font-semibold text-white/45">Dipercaya lebih dari 2.000 keluarga Indonesia.</p>
           <div className="flex items-center gap-6">
-            {["Kebijakan Privasi", "Syarat Layanan", "Sitemap"].map((l) => (
-              <a key={l} href="#atas" className="u-link transition-colors hover:text-white/70">{l}</a>
+            {LEGAL_LINKS.map((l) => (
+              <FooterLink key={l.label} label={l.label} href={l.href} />
             ))}
           </div>
         </div>

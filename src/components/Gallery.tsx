@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Expand, MapPin, X } from "lucide-react";
 import { EASE, Reveal, SectionHead } from "./ui";
@@ -100,6 +100,9 @@ function Lightbox({
       transition={{ duration: 0.35 }}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-arctic/85 backdrop-blur-xl"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Galeri proyek: ${project.title}`}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.92, y: 24 }}
@@ -169,6 +172,26 @@ export default function Gallery() {
   const closeLightbox = () => setActive(null);
   const prev = () => setActive((v) => (v !== null ? (v - 1 + PROJECTS.length) % PROJECTS.length : null));
   const next = () => setActive((v) => (v !== null ? (v + 1) % PROJECTS.length : null));
+
+  /* Dukungan papan tik + kunci gulir latar saat lightbox terbuka */
+  useEffect(() => {
+    if (active === null) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+    };
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [active]);
 
   return (
     <section className="relative bg-white py-24 md:py-36">
