@@ -18,6 +18,7 @@ Landing page satu halaman untuk bisnis jasa servis AC *home service* (teknisi da
 - [Fitur](#-fitur)
 - [Teknologi](#-teknologi)
 - [Menjalankan Proyek](#-menjalankan-proyek)
+- [Pemecahan Masalah](#-pemecahan-masalah)
 - [Konfigurasi Data Bisnis](#-konfigurasi-data-bisnis)
 - [Struktur Proyek](#-struktur-proyek)
 - [Bagian Halaman](#-bagian-halaman)
@@ -82,24 +83,113 @@ Alur halaman disusun mengikuti psikologi pembelian: **masalah → solusi → buk
 
 ## Menjalankan Proyek
 
-**Prasyarat:** Node.js 18 atau lebih baru.
+**Prasyarat:** Node.js 18 atau lebih baru → unduh di [nodejs.org](https://nodejs.org)
+
+> **⚠️ Jangan pakai ekstensi "Live Server" di VS Code.**
+> Proyek ini bukan HTML statis — kodenya TypeScript/JSX dan wajib dikompilasi dulu.
+> Live Server hanya menyajikan berkas mentah, sehingga halaman akan **tampil putih kosong**.
+> Lihat [Pemecahan Masalah](#-pemecahan-masalah) untuk penjelasan lengkap.
+
+**Cara 1 — Terminal (paling umum):**
 
 ```bash
-# 1. Install dependensi
-npm install
-
-# 2. Jalankan server pengembangan
-npm run dev
+npm install     # Hanya sekali, atau setelah menarik perubahan baru
+npm run dev     # Jalankan server pengembangan
 ```
 
-Buka `http://localhost:5173` di browser.
+Buka `http://localhost:5173` di browser. Server otomatis memuat ulang setiap berkas disimpan.
+
+**Cara 2 — VS Code (sekali klik):**
+
+1. Buka folder proyek di VS Code
+2. Install ekstensi yang disarankan (VS Code akan menawarkan otomatis)
+3. Tekan **`F5`** → server menyala sendiri, Chrome terbuka dengan mode debug
+
+Atau tekan **`Ctrl + Shift + B`** untuk menjalankan server saja.
+
+> Sudah tersedia konfigurasi siap pakai di `.vscode/` — Anda tidak perlu menyetel apa pun.
 
 **Perintah lain:**
 
 ```bash
+npm start         # Sama seperti npm run dev
 npm run build     # Build untuk produksi → hasil di folder dist/
 npm run preview   # Lihat hasil build secara lokal
 ```
+
+---
+
+## 🛠 Pemecahan Masalah
+
+### Halaman tampil putih kosong (atau hanya latar polos)
+
+**Ini masalah paling sering terjadi, dan biasanya bukan karena kode rusak.**
+
+**Penyebab:** Anda memakai ekstensi **Live Server** atau **Live Preview** di VS Code, atau membuka `index.html` langsung.
+
+**Mengapa gagal:** `index.html` hanya berisi satu baris:
+
+```html
+<script type="module" src="/src/main.tsx"></script>
+```
+
+Berkas itu adalah **TypeScript + JSX** — bahasa yang tidak dimengerti browser. Isinya:
+
+```tsx
+import { StrictMode } from "react";        // ← browser tidak tahu "react" itu apa
+import App from "./App";
+createRoot(...).render(<StrictMode><App /></StrictMode>);   // ← ini bukan JavaScript biasa
+```
+
+Live Server hanya mengirim berkas apa adanya, tanpa mengompilasi. Akibatnya browser:
+
+1. **Gagal membaca sintaks JSX** → `SyntaxError: Unexpected token '<'`
+2. **Gagal menemukan modul `react`** → `Failed to resolve module specifier "react"`
+3. Berhenti bekerja → halaman putih
+
+Vite-lah yang berperan mengompilasi JSX ke JavaScript dan menyelesaikan `import "react"` menjadi berkas nyata. Tanpa Vite, halaman tidak akan jalan.
+
+**Solusi — hentikan Live Server, lalu:**
+
+```bash
+npm run dev
+```
+
+Buka `http://localhost:5173` (**bukan** `127.0.0.1:5500`).
+
+| Alamat | Status |
+|---|---|
+| `http://localhost:5173` | ✅ Benar — ini Vite |
+| `http://127.0.0.1:5500` | ❌ Live Server |
+| `file:///.../index.html` | ❌ Dibuka langsung |
+
+---
+
+### Ingin tetap memakai Live Server?
+
+Bisa, tapi **hanya untuk hasil build**, bukan kode sumbernya:
+
+```bash
+npm run build
+```
+
+Lalu buka folder **`dist/`** dengan Live Server (bukan folder utama). Hasil build sudah digabung menjadi satu berkas HTML yang siap dijalankan tanpa Vite.
+
+> Ingat: setiap kali kode diubah, jalankan `npm run build` lagi. Folder `dist/` tidak ikut masuk Git.
+
+---
+
+### Pesan galat lain
+
+| Gejala | Penyebab | Solusi |
+|---|---|---|
+| `npm: command not found` | Node.js belum terpasang | Unduh di [nodejs.org](https://nodejs.org) |
+| `Cannot find module 'vite'` | Dependensi belum di-install | Jalankan `npm install` |
+| `Port 5173 is in use` | Ada server lain yang jalan | Vite otomatis pindah ke 5174 — cek alamat di terminal |
+| `EADDRINUSE` | Port terpakai | Tutup terminal server lama, atau `npm run dev -- --port 3000` |
+| Halaman putih setelah build | Berkas dibuka lewat `file://` | Jalankan `npm run preview` atau hosting lewat server HTTP |
+
+**Tips:** kalau tampilan tidak sesuai dugaan, buka **Console** di browser (`F12`) — pesan galat di sana hampir selalu menunjukkan penyebabnya.
 
 ---
 
@@ -143,6 +233,12 @@ export const CONTACT = {
 ├── index.html                  Metadata SEO, favicon, Open Graph
 ├── vite.config.ts              Konfigurasi build & alias "@"
 ├── PRD.md                      Product Requirements Document
+│
+├── .vscode/                    Konfigurasi VS Code siap pakai
+│   ├── extensions.json         Ekstensi yang disarankan
+│   ├── settings.json           Pengaturan proyek
+│   ├── tasks.json              Tugas jalankan server (Ctrl+Shift+B)
+│   └── launch.json             Debug di Chrome/Edge (F5)
 │
 ├── docs/
 │   └── banner.jpg              Gambar banner untuk README ini
