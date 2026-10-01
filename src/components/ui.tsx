@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useInView, useMotionValue, animate } from "framer-motion";
 import { Star } from "lucide-react";
+import { waLink } from "@/config/site";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -174,10 +175,19 @@ export function GhostBtn({
 }
 
 /* ---------- WhatsApp tertiary link ---------- */
-export function WaLink({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
+export function WaLink({
+  children,
+  dark = false,
+  layanan,
+}: {
+  children: ReactNode;
+  dark?: boolean;
+  /** Nama layanan opsional — otomatis masuk ke pesan WhatsApp */
+  layanan?: string;
+}) {
   return (
     <a
-      href="https://wa.me/6281200000001"
+      href={waLink(layanan)}
       target="_blank"
       rel="noreferrer"
       className={`u-link inline-flex items-center gap-2 text-[13px] font-semibold ${

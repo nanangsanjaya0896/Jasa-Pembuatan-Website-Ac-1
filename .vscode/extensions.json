@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "usernamehw.errorlens"
+  ],
+  "unwantedRecommendations": [
+    "ritwickdey.LiveServer",
+    "ms-vscode.live-server"
+  ]
+}

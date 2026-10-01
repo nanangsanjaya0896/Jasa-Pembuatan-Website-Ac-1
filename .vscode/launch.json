@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Buka website di Chrome (debug)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "2. Jalankan website",
+      "sourceMaps": true
+    },
+    {
+      "name": "Buka website di Edge (debug)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "2. Jalankan website",
+      "sourceMaps": true
+    }
+  ]
+}

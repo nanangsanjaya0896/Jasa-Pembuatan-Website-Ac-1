@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. Install dependensi (wajib pertama kali)",
+      "detail": "Menjalankan npm install — WAJIB agar tidak ada error merah di VS Code",
+      "type": "shell",
+      "command": "npm install",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Jalankan website",
+      "detail": "Menjalankan Vite dev server di http://localhost:5173",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": [
+          {
+            "regexp": "^\\s*$"
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE",
+          "endsPattern": "ready in"
+        }
+      }
+    },
+    {
+      "label": "3. Build untuk produksi",
+      "detail": "Menghasilkan folder dist/ yang siap di-upload ke hosting",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

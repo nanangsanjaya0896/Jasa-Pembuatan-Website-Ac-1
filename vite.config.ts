@@ -16,4 +16,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    host: true,
+    // Izinkan host preview (mis. *.e2b.app) maupun akses lewat localhost/tunnel.
+    allowedHosts: true,
+    // Terima request dari origin preview apa pun.
+    cors: true,
+  },
+  preview: {
+    host: true,
+    allowedHosts: true,
+  },
 });

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -16,11 +17,12 @@ import FinalCta from "./components/FinalCta";
 import Trust from "./components/Trust";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
+import { IS_DEMO, waLink } from "./config/site";
 
 function WaFloat() {
   return (
     <motion.a
-      href="https://wa.me/6281200000001"
+      href={waLink()}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat WhatsApp ARKTIS"
@@ -43,6 +45,16 @@ function WaFloat() {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (IS_DEMO) {
+      console.warn(
+        "%c[ARKTIS] Mode DEMO aktif",
+        "color:#e8720c;font-weight:bold",
+        "\nNomor WhatsApp masih contoh. Ganti di src/config/site.ts → WHATSAPP_NUMBER"
+      );
+    }
+  }, []);
+
   return (
     <div className="relative overflow-x-clip">
       <Navbar />

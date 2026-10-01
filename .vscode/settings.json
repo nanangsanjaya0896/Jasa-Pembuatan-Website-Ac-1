@@ -1,0 +1,23 @@
+{
+  // Sembunyikan folder besar dari panel Explorer & pencarian.
+  // Isinya tetap ada di disk — hanya tidak ditampilkan di VS Code.
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "package-lock.json": true
+  },
+
+  // Sarankan nama kelas Tailwind saat mengetik di dalam className="..."
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+
+  // Memudahkan menulis markup di dalam file React
+  "emmet.includeLanguages": {
+    "typescriptreact": "html"
+  }
+}
