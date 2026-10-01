@@ -121,6 +121,51 @@ npm run preview   # Lihat hasil build secara lokal
 
 ## 🛠 Pemecahan Masalah
 
+### Semua kode merah di VS Code
+
+**Ini hampir selalu berarti dependensi belum di-install.** Kodenya tidak ada yang salah.
+
+**Gejalanya:** hampir setiap baris bergaris merah, dan panel Problems penuh dengan pesan seperti:
+
+```
+Cannot find module 'react' or its corresponding type declarations.   TS2307
+Cannot find module 'lucide-react' or its corresponding type declarations.
+JSX element implicitly has type 'any' because no interface
+'JSX.IntrinsicElements' exists.                                       TS7026
+```
+
+**Penyebabnya:** proyek ini memakai pustaka pihak ketiga (React, Framer Motion, Lucide, Tailwind). Semua itu tersimpan di folder `node_modules/`, yang **tidak ikut masuk Git** — ukurannya ratusan MB dan jumlahnya puluhan ribu berkas. Jadi ketika proyek diunduh dari GitHub, folder itu belum ada.
+
+Tanpa folder tersebut, VS Code tidak bisa menemukan pustakanya, sehingga setiap baris `import` dianggap salah. Satu error `Cannot find module 'react'` menular ke seluruh berkas, karena semua komponen JSX bergantung padanya — itulah sebabnya jumlahnya bisa mencapai **ratusan error sekaligus**.
+
+> Angka nyata pada proyek ini: tanpa `node_modules` → **865 error**.
+> Setelah `npm install` → **0 error**.
+
+**Solusi — satu perintah saja:**
+
+```bash
+npm install
+```
+
+Tunggu sampai selesai (sekitar 1 menit), lalu **restart jendela VS Code**:
+`Ctrl + Shift + P` → ketik `Reload Window` → Enter.
+
+Error merah akan hilang seluruhnya.
+
+> **⚠️ Jangan pakai `npm install` di luar folder proyek.**
+> Pastikan terminal sudah berada di folder yang berisi `package.json`.
+> Perintah `cd` untuk masuk ke folder proyek, contoh:
+> `cd C:\Users\Nama\Documents\Jasa-Pembuatan-Website-Ac-1`
+
+**Di VS Code, bisa juga lewat menu:** `Ctrl + Shift + P` → `Tasks: Run Task` → pilih **"1. Install dependensi (wajib pertama kali)"**.
+
+**Cek apakah sudah beres:** jalankan `Ctrl + Shift + P` → `Tasks: Run Task` → **"3. Build untuk produksi"**. Kalau berhasil tanpa pesan merah, artinya semua sudah normal.
+
+> **Kenapa `node_modules` tidak ikut di-commit?**
+> Itu memang praktik standar. Yang disimpan di Git hanyalah daftar pustakanya (`package.json` + `package-lock.json`). Siapa pun yang mengunduh proyek cukup menjalankan `npm install` untuk memasangnya kembali — caranya sama di semua komputer dan sistem operasi.
+
+---
+
 ### Halaman tampil putih kosong (atau hanya latar polos)
 
 **Ini masalah paling sering terjadi, dan biasanya bukan karena kode rusak.**
@@ -183,13 +228,16 @@ Lalu buka folder **`dist/`** dengan Live Server (bukan folder utama). Hasil buil
 
 | Gejala | Penyebab | Solusi |
 |---|---|---|
+| Semua baris merah di VS Code | Dependensi belum di-install | `npm install` lalu Reload Window |
 | `npm: command not found` | Node.js belum terpasang | Unduh di [nodejs.org](https://nodejs.org) |
 | `Cannot find module 'vite'` | Dependensi belum di-install | Jalankan `npm install` |
 | `Port 5173 is in use` | Ada server lain yang jalan | Vite otomatis pindah ke 5174 — cek alamat di terminal |
 | `EADDRINUSE` | Port terpakai | Tutup terminal server lama, atau `npm run dev -- --port 3000` |
 | Halaman putih setelah build | Berkas dibuka lewat `file://` | Jalankan `npm run preview` atau hosting lewat server HTTP |
+| `npm ERR! enoent package.json` | Terminal berada di folder yang salah | `cd` ke folder proyek yang berisi `package.json` |
+| Panel Problems penuh TS7026 | Sama seperti kode merah | `npm install`, lalu Reload Window |
 
-**Tips:** kalau tampilan tidak sesuai dugaan, buka **Console** di browser (`F12`) — pesan galat di sana hampir selalu menunjukkan penyebabnya.
+**Tips:** kalau tampilan tidak sesuai dugaan, buka **Console** di browser (`F12`) — pesan galat di sana hampir selalu menunjukkan penyebabnya. Untuk error di VS Code, pakai panel **Problems** (`Ctrl + Shift + M`).
 
 ---
 
